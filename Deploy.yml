@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_NAME: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
+  AZURE_FUNCTIONAPP_NAME: Wasit-market-trend
   PYTHON_VERSION: '3.12'
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ env.PYTHON_VERSION }}
+        python-version: 3.12.3
 
     - name: Install dependencies
       run: |
@@ -52,4 +52,4 @@ jobs:
 
     - name: Verify deployment
       run: |
-        curl -s "https://wasit-market-trend.scm.azurewebsites.net/" | j
+        curl -s "https://wasit-market-trend.scm.azurewebsites.net/" 
