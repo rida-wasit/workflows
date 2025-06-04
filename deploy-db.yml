@@ -1,0 +1,45 @@
+name: Deploy to Azure PostgreSQL
+
+on:
+  push:
+    branches: [ feature/market-data-integration ]
+  workflow_dispatch:
+
+env:
+  DB_HOST: postgres
+  DB_NAME: postgres
+  DB_USER: postgres
+  DB_PASSWORD: Postgres@
+  DB_SSL: Require
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip3 install --upgrade pip
+        pip3 install psycopg2-binary python-dotenv requests beautifulsoup4
+
+    - name: Run database migrations
+      run: |
+        python src/database/migrate.py
+
+    - name: Scrape and load data
+      run: |
+        python src/api_integration.py
+
+    - name: Verify deployment
+      run: |
+        psql "host=wasit-flexible dbname=postgres user=postgres password=Postgres@ sslmode=require" \
+          -c "SELECT COUNT(*) FROM market_prices;"
